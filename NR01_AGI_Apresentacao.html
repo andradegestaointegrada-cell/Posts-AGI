@@ -1,0 +1,1203 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NR-01 GRO/PGR — Andrade Gestão Integrada</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #091D39;
+    --gold: #CFAE70;
+    --gold-light: #E8D09A;
+    --cream: #F5F0E8;
+    --midnavy: #1A3A5C;
+    --white: #FFFFFF;
+    --gray: #64748B;
+    --light: #E8E0D0;
+    --red: #DC3545;
+    --amber: #E0A020;
+    --blue: #0D6EFD;
+    --green: #198754;
+    --purple: #6F42C1;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Montserrat', sans-serif;
+    background: #04101F;
+    color: var(--white);
+    height: 100vh;
+    overflow: hidden;
+    user-select: none;
+  }
+
+  /* ── DECK CONTAINER ── */
+  #deck {
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .slide {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    opacity: 0;
+    transform: translateX(60px);
+    transition: opacity .45s cubic-bezier(.4,0,.2,1), transform .45s cubic-bezier(.4,0,.2,1);
+    pointer-events: none;
+  }
+  .slide.active {
+    opacity: 1;
+    transform: translateX(0);
+    pointer-events: all;
+  }
+  .slide.exit {
+    opacity: 0;
+    transform: translateX(-60px);
+  }
+
+  /* ── BACKGROUNDS ── */
+  .bg-dark  { background: var(--navy); }
+  .bg-light { background: var(--cream); }
+
+  /* ── LEFT ACCENT BAR ── */
+  .slide::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0;
+    width: 6px; height: 100%;
+    z-index: 10;
+  }
+  .bg-dark::before  { background: var(--gold); }
+  .bg-light::before { background: var(--navy); }
+
+  /* ── BOTTOM BAR ── */
+  .slide::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0;
+    width: 100%; height: 3px;
+  }
+  .bg-dark::after  { background: linear-gradient(90deg, var(--gold), transparent); }
+  .bg-light::after { background: linear-gradient(90deg, var(--navy), transparent); }
+
+  /* ── TYPOGRAPHY ── */
+  .serif { font-family: 'Cormorant Garamond', serif; }
+  h1.display {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(5rem, 12vw, 10rem);
+    font-weight: 700;
+    line-height: 1;
+    color: var(--white);
+    letter-spacing: .04em;
+  }
+  h2.display {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.2rem, 5vw, 4rem);
+    font-weight: 600;
+    color: var(--gold);
+    letter-spacing: .06em;
+  }
+  .slide-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.4rem, 2.5vw, 2rem);
+    font-weight: 700;
+    letter-spacing: .02em;
+  }
+  .bg-dark  .slide-title { color: var(--white); }
+  .bg-light .slide-title { color: var(--navy); }
+
+  /* ── TITLE UNDERLINE ── */
+  .title-bar {
+    width: 80px; height: 3px;
+    background: var(--gold);
+    margin-top: 6px; margin-bottom: 18px;
+    border-radius: 2px;
+  }
+
+  /* ── FOOTER ── */
+  .footer {
+    font-size: .62rem;
+    font-weight: 400;
+    letter-spacing: .05em;
+    opacity: .55;
+    padding: 0 28px 10px;
+    margin-top: auto;
+    font-style: italic;
+  }
+  .bg-dark  .footer { color: var(--gold); }
+  .bg-light .footer { color: var(--navy); }
+
+  /* ── BADGE ── */
+  .badge {
+    display: inline-block;
+    background: var(--gold);
+    color: var(--navy);
+    font-size: .62rem;
+    font-weight: 700;
+    letter-spacing: .14em;
+    padding: 5px 14px;
+    text-transform: uppercase;
+  }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--white);
+    border-radius: 2px;
+    box-shadow: 0 4px 20px rgba(0,0,0,.12);
+    position: relative;
+    overflow: hidden;
+  }
+  .card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0;
+    width: 4px; height: 100%;
+    background: var(--gold);
+  }
+  .card-dark {
+    background: var(--midnavy);
+    box-shadow: 0 4px 20px rgba(0,0,0,.3);
+    position: relative;
+    overflow: hidden;
+    border-radius: 2px;
+  }
+  .card-dark::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0;
+    width: 4px; height: 100%;
+    background: var(--gold);
+  }
+
+  /* ── GRID HELPERS ── */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+  .grid-2-3 { display: grid; grid-template-columns: repeat(2,1fr); gap: 10px; }
+
+  /* ── PILL NUMBER ── */
+  .num-pill {
+    width: 38px; height: 38px;
+    background: var(--gold);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800;
+    font-size: .88rem;
+    color: var(--navy);
+    flex-shrink: 0;
+  }
+
+  /* ── SLIDE CONTENT PAD ── */
+  .pad { padding: 20px 28px 0; }
+
+  /* ── SECTION SLIDE ── */
+  .section-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    gap: 16px;
+    text-align: center;
+  }
+  .section-num {
+    width: 90px; height: 90px;
+    border-radius: 50%;
+    background: var(--gold);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3.2rem;
+    font-weight: 700;
+    color: var(--navy);
+    box-shadow: 0 8px 32px rgba(207,174,112,.35);
+  }
+  .section-title-text {
+    font-family: 'Montserrat', sans-serif;
+    font-size: clamp(1.2rem, 2.2vw, 1.6rem);
+    font-weight: 700;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    color: var(--white);
+  }
+  .section-divider {
+    width: 160px; height: 2px;
+    background: var(--gold);
+    border-radius: 2px;
+  }
+
+  /* ── MATRIX CELLS ── */
+  .mx-cell {
+    padding: 10px 6px;
+    text-align: center;
+    font-weight: 800;
+    font-size: .72rem;
+    letter-spacing: .08em;
+    border: 2px solid rgba(255,255,255,.18);
+    border-radius: 2px;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  /* ── PDCA QUADRANT ── */
+  .pdca-quad {
+    background: var(--midnavy);
+    border-radius: 2px;
+    display: grid;
+    grid-template-columns: 72px 1fr;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0,0,0,.25);
+  }
+  .pdca-label {
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 4px;
+    font-weight: 800;
+    font-size: .95rem;
+    letter-spacing: .1em;
+    color: var(--navy);
+    padding: 8px 4px;
+  }
+  .pdca-sub { font-size: .58rem; font-weight: 600; color: var(--navy); opacity: .8; font-style: italic; }
+  .pdca-items { padding: 10px 12px; display: flex; flex-direction: column; gap: 5px; }
+  .pdca-item { font-size: .72rem; color: var(--white); display: flex; align-items: center; gap: 6px; }
+  .pdca-item::before { content: '›'; color: var(--gold); font-weight: 800; font-size: 1rem; line-height: 1; }
+
+  /* ── HIERARCHY BARS ── */
+  .hier-bar {
+    display: flex; align-items: center;
+    height: 46px;
+    border-radius: 2px;
+    overflow: hidden;
+    box-shadow: 0 3px 12px rgba(0,0,0,.2);
+  }
+  .hier-label {
+    padding: 0 16px;
+    font-weight: 700; font-size: .78rem;
+    letter-spacing: .06em;
+    color: var(--white);
+    white-space: nowrap;
+    min-width: 240px;
+  }
+  .hier-desc {
+    padding: 0 16px;
+    font-size: .72rem;
+    color: rgba(255,255,255,.85);
+    font-style: italic;
+  }
+
+  /* ── RISK COLUMNS ── */
+  .risk-col { border-radius: 2px; overflow: hidden; display: flex; flex-direction: column; }
+  .risk-header { padding: 8px 10px; text-align: center; font-weight: 700; font-size: .78rem; color: var(--white); letter-spacing: .05em; }
+  .risk-body { background: var(--white); padding: 10px; flex: 1; font-size: .72rem; color: var(--gray); line-height: 1.6; }
+
+  /* ── CONCEPT BOX ── */
+  .concept-box {
+    border-radius: 2px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    box-shadow: 0 4px 20px rgba(0,0,0,.1);
+  }
+  .concept-header {
+    padding: 10px 16px;
+    display: flex; align-items: center; gap: 10px;
+    font-weight: 700; font-size: .9rem; letter-spacing: .1em;
+  }
+  .concept-body { padding: 14px 16px; flex: 1; font-size: .76rem; line-height: 1.65; }
+  .concept-item { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 7px; }
+  .concept-item::before { content: '▸'; color: var(--gold); font-weight: 800; line-height: 1.4; flex-shrink: 0; }
+
+  /* ── FORMULA BOX ── */
+  .formula {
+    background: var(--cream);
+    border-radius: 2px;
+    padding: 12px 20px;
+    text-align: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--navy);
+    box-shadow: 0 2px 12px rgba(0,0,0,.08);
+  }
+
+  /* ── DOCUMENT CARD ── */
+  .doc-card {
+    background: var(--white);
+    border-radius: 2px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0,0,0,.1);
+    display: flex; flex-direction: column;
+  }
+  .doc-header {
+    background: var(--navy);
+    padding: 12px 14px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .doc-num {
+    width: 34px; height: 34px;
+    background: var(--gold);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: .8rem; color: var(--navy); flex-shrink: 0;
+  }
+  .doc-title { font-size: .82rem; font-weight: 700; color: var(--white); line-height: 1.3; }
+  .doc-body { padding: 12px 14px; flex: 1; }
+  .doc-item { display: flex; align-items: flex-start; gap: 7px; margin-bottom: 7px; font-size: .73rem; color: var(--navy); }
+  .doc-item::before { content: '✓'; color: var(--green); font-weight: 800; flex-shrink: 0; }
+  .doc-ref { padding: 7px 14px; background: var(--cream); font-size: .64rem; color: var(--gold); font-style: italic; text-align: center; }
+
+  /* ── QUOTE BOX ── */
+  .quote-box {
+    background: var(--navy);
+    border-left: 5px solid var(--gold);
+    padding: 14px 18px;
+    border-radius: 0 2px 2px 0;
+    font-style: italic;
+    font-size: .82rem;
+    line-height: 1.6;
+    color: var(--white);
+    box-shadow: 0 4px 20px rgba(0,0,0,.25);
+    position: relative;
+  }
+  .quote-box .quote-attr {
+    display: block; margin-top: 6px;
+    font-size: .65rem; color: var(--gold); font-style: normal; font-weight: 600; letter-spacing: .06em;
+  }
+
+  /* ── PSICO CARD ── */
+  .psico-card {
+    background: var(--midnavy);
+    border-radius: 2px;
+    border-left: 4px solid var(--gold);
+    padding: 10px 14px;
+    box-shadow: 0 3px 12px rgba(0,0,0,.2);
+  }
+  .psico-title { font-size: .8rem; font-weight: 700; color: var(--gold); margin-bottom: 4px; }
+  .psico-desc  { font-size: .72rem; color: #CADCFC; }
+
+  /* ── RESP CARD ── */
+  .resp-card {
+    background: var(--white);
+    border-radius: 2px;
+    padding: 12px 14px 12px 48px;
+    position: relative;
+    box-shadow: 0 3px 14px rgba(0,0,0,.1);
+    border-left: 1px solid var(--light);
+  }
+  .resp-icon-wrap {
+    position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
+    width: 30px; height: 30px;
+    background: var(--navy);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: .9rem;
+  }
+  .resp-title { font-size: .8rem; font-weight: 700; color: var(--navy); margin-bottom: 3px; }
+  .resp-desc  { font-size: .7rem; color: var(--gray); line-height: 1.45; }
+
+  /* ── STEP CARD ── */
+  .step-card {
+    background: var(--midnavy);
+    border-radius: 2px;
+    overflow: hidden;
+    display: flex;
+    box-shadow: 0 3px 14px rgba(0,0,0,.25);
+  }
+  .step-num-block {
+    min-width: 50px;
+    background: var(--gold);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 1.3rem; color: var(--navy);
+    font-family: 'Cormorant Garamond', serif;
+  }
+  .step-text { padding: 10px 14px; }
+  .step-title { font-size: .82rem; font-weight: 700; color: var(--white); margin-bottom: 4px; }
+  .step-desc  { font-size: .7rem; color: #CADCFC; line-height: 1.45; }
+
+  /* ── PILLAR CARD ── */
+  .pillar {
+    background: var(--navy);
+    border-top: 3px solid var(--gold);
+    border-radius: 2px;
+    padding: 20px 14px 14px;
+    text-align: center;
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    box-shadow: 0 4px 20px rgba(0,0,0,.3);
+    transition: transform .2s ease;
+  }
+  .pillar:hover { transform: translateY(-3px); }
+  .pillar:nth-child(2) { background: var(--midnavy); }
+  .pillar-icon { font-size: 1.8rem; }
+  .pillar-label { font-weight: 800; font-size: .78rem; letter-spacing: .1em; color: var(--white); }
+  .pillar-sub   { font-size: .72rem; color: var(--gold); font-weight: 500; }
+
+  /* ── AGENDA ITEM ── */
+  .agenda-item {
+    background: var(--white);
+    display: flex; align-items: center; gap: 0;
+    box-shadow: 0 3px 12px rgba(0,0,0,.08);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .agenda-left {
+    min-width: 52px;
+    padding: 14px 0;
+    background: var(--cream);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: .95rem; color: var(--gold);
+    border-right: 3px solid var(--navy);
+  }
+  .agenda-icon { padding: 14px 12px; font-size: 1.1rem; }
+  .agenda-text { padding: 10px 10px 10px 0; flex: 1; }
+  .agenda-title { font-size: .8rem; font-weight: 700; color: var(--navy); }
+  .agenda-desc  { font-size: .7rem; color: var(--gray); }
+
+  /* ── TIMELINE ── */
+  .timeline { display: flex; align-items: flex-end; gap: 0; position: relative; }
+  .timeline::before {
+    content: '';
+    position: absolute; bottom: 22px; left: 0; right: 0; height: 3px;
+    background: var(--gold); z-index: 0;
+  }
+  .tl-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 10px; position: relative; z-index: 1; }
+  .tl-dot {
+    width: 18px; height: 18px; border-radius: 50%;
+    background: var(--white); border: 3px solid var(--gold);
+    flex-shrink: 0;
+  }
+  .tl-card {
+    background: var(--white);
+    border-radius: 2px;
+    padding: 10px 12px;
+    font-size: .72rem;
+    color: var(--gray);
+    line-height: 1.5;
+    width: 95%;
+    box-shadow: 0 3px 12px rgba(0,0,0,.1);
+    border-top: 3px solid var(--navy);
+  }
+  .tl-year {
+    background: var(--navy);
+    color: var(--gold);
+    font-weight: 800; font-size: .78rem;
+    padding: 4px 10px;
+    border-radius: 2px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.2);
+  }
+  .tl-leg { font-weight: 700; color: var(--navy); font-size: .75rem; margin-bottom: 4px; }
+
+  /* ── CHANGE ITEM ── */
+  .change-item {
+    background: var(--white);
+    border-left: 4px solid var(--gold);
+    border-radius: 0 2px 2px 0;
+    padding: 10px 14px;
+    box-shadow: 0 2px 10px rgba(0,0,0,.08);
+  }
+  .change-title { font-size: .8rem; font-weight: 700; color: var(--navy); margin-bottom: 3px; }
+  .change-desc  { font-size: .72rem; color: var(--gray); }
+
+  /* ── NAVIGATION ── */
+  #nav {
+    position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+    display: flex; align-items: center; gap: 12px;
+    background: rgba(9,29,57,.9);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(207,174,112,.25);
+    border-radius: 50px;
+    padding: 10px 20px;
+    z-index: 1000;
+    box-shadow: 0 8px 32px rgba(0,0,0,.4);
+  }
+  .nav-btn {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: var(--gold); border: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem; color: var(--navy); font-weight: 800;
+    transition: transform .15s ease, box-shadow .15s ease;
+  }
+  .nav-btn:hover { transform: scale(1.1); box-shadow: 0 4px 16px rgba(207,174,112,.5); }
+  .nav-btn:disabled { opacity: .3; cursor: not-allowed; transform: none; box-shadow: none; }
+  #counter { font-size: .72rem; font-weight: 600; color: var(--gold); letter-spacing: .08em; min-width: 60px; text-align: center; }
+  #progress-bar { width: 120px; height: 3px; background: rgba(255,255,255,.15); border-radius: 2px; overflow: hidden; }
+  #progress-fill { height: 100%; background: var(--gold); border-radius: 2px; transition: width .3s ease; }
+
+  /* ── COVER specific ── */
+  .cover-content { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 0 40px; gap: 8px; }
+
+  /* ── INFO BOX ── */
+  .info-box {
+    background: var(--navy);
+    border-left: 4px solid var(--gold);
+    padding: 10px 16px;
+    font-size: .78rem; color: var(--white); line-height: 1.55;
+    box-shadow: 0 3px 14px rgba(0,0,0,.2);
+  }
+
+  /* ── CLOSING ── */
+  .closing {
+    flex: 1; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 14px;
+    text-align: center; padding: 30px;
+  }
+  .closing-card {
+    background: var(--midnavy);
+    border-top: 3px solid var(--gold);
+    border-radius: 2px;
+    padding: 18px 30px;
+    box-shadow: 0 6px 24px rgba(0,0,0,.3);
+    max-width: 460px; width: 100%;
+  }
+
+  /* ── TOP SECTION LABEL ── */
+  .section-label {
+    font-size: .58rem; font-weight: 700; letter-spacing: .16em;
+    text-transform: uppercase;
+    color: var(--gold);
+    background: rgba(207,174,112,.12);
+    padding: 3px 10px;
+    border-radius: 20px;
+    display: inline-block;
+    margin-bottom: 4px;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+    h1.display { font-size: 4rem; }
+  }
+</style>
+</head>
+<body>
+<div id="deck">
+
+  <!-- ════════════════════════════════ SLIDE 1 — CAPA ═══ -->
+  <div class="slide bg-dark active" id="s1">
+    <div class="cover-content">
+      <div><span class="badge">Andrade Gestão Integrada</span></div>
+      <div>
+        <h1 class="display">NR-01</h1>
+        <h2 class="display">GRO / PGR</h2>
+      </div>
+      <div style="width:200px;height:2px;background:var(--gold);margin:4px 0"></div>
+      <p class="serif" style="font-size:1.25rem;color:#CADCFC;font-style:italic;">
+        Novas Diretrizes &nbsp;·&nbsp; Implementação &nbsp;·&nbsp; Adequação
+      </p>
+      <p style="font-size:.78rem;color:#888;margin-top:4px;">
+        Portaria MTE nº 1.416/2024 &nbsp;|&nbsp; Vigência: 26 de maio de 2026
+      </p>
+    </div>
+    <div class="footer">© 2025 Andrade Gestão Integrada &nbsp;|&nbsp; Todos os direitos reservados</div>
+  </div>
+
+  <!-- ════════════════════════════════ SLIDE 2 — AGENDA ═══ -->
+  <div class="slide bg-light" id="s2">
+    <div class="pad">
+      <p class="slide-title">O que você vai aprender hoje</p>
+      <div class="title-bar"></div>
+      <div class="grid-2" style="gap:10px;">
+        <div class="agenda-item">
+          <div class="agenda-left">01</div>
+          <div class="agenda-icon">⚠️</div>
+          <div class="agenda-text"><div class="agenda-title">Contexto & Mudanças</div><div class="agenda-desc">O que mudou com a Portaria MTE 1.416/2024</div></div>
+        </div>
+        <div class="agenda-item">
+          <div class="agenda-left">02</div>
+          <div class="agenda-icon">🛡️</div>
+          <div class="agenda-text"><div class="agenda-title">O GRO na Prática</div><div class="agenda-desc">Ciclo PDCA, abrangência e responsabilidades</div></div>
+        </div>
+        <div class="agenda-item">
+          <div class="agenda-left">03</div>
+          <div class="agenda-icon">🔍</div>
+          <div class="agenda-text"><div class="agenda-title">Identificação de Perigos</div><div class="agenda-desc">Processo completo e as 5 categorias de risco</div></div>
+        </div>
+        <div class="agenda-item">
+          <div class="agenda-left">04</div>
+          <div class="agenda-icon">📊</div>
+          <div class="agenda-text"><div class="agenda-title">Avaliação & Controle</div><div class="agenda-desc">Probabilidade × Severidade e hierarquia</div></div>
+        </div>
+        <div class="agenda-item">
+          <div class="agenda-left">05</div>
+          <div class="agenda-icon">📋</div>
+          <div class="agenda-text"><div class="agenda-title">Documentação do PGR</div><div class="agenda-desc">3 documentos mínimos obrigatórios</div></div>
+        </div>
+        <div class="agenda-item">
+          <div class="agenda-left">06</div>
+          <div class="agenda-icon">🧠</div>
+          <div class="agenda-text"><div class="agenda-title">Riscos Psicossociais</div><div class="agenda-desc">A grande inovação da NR-01 revisada</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="footer">Andrade Gestão Integrada &nbsp;|&nbsp; Consultoria em SGI & SST &nbsp;|&nbsp; www.andradegestaointegrada.com.br</div>
+  </div>
+
+  <!-- ════════════════════════════════ SLIDE 3 — SECTION 1 ═══ -->
+  <div class="slide bg-dark" id="s3">
+    <div class="section-center">
+      <div class="section-num">1</div>
+      <div class="section-title-text">Contexto & O que Mudou</div>
+      <div class="section-divider"></div>
+    </div>
+    <div class="footer">Andrade Gestão Integrada &nbsp;|&nbsp; Consultoria em SGI & SST</div>
+  </div>
+
+  <!-- ════════════════════════════════ SLIDE 4 — CRONOLOGIA ═══ -->
+  <div class="slide bg-light" id="s4">
+    <div class="pad">
+      <p class="slide-title">Evolução Normativa: Do PPRA ao Novo GRO</p>
+      <div class="title-bar"></div>
+      <div class="info-box" style="margin-bottom:16px;">
+        ⚠️&nbsp; <em>Processo tripartite: governo, empregadores e trabalhadores garantiram que as mudanças refletem a realidade dos ambientes de trabalho.</em>
+      </div>
+      <div class="timeline" style="padding:0 10px;">
+        <div class="tl-item">
+          <div class="tl-card"><div class="tl-leg">NR-09 PPRA</div>Apenas riscos ambientais:<br>físicos, químicos e biológicos</div>
+          <div class="tl-dot"></div>
+          <div class="tl-year">1994</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-card"><div class="tl-leg">GRO Introduzido</div>Portaria SEPRT 6.730 cria o GRO/PGR na NR-01 — abrangência ampliada</div>
+          <div class="tl-dot"></div>
+          <div class="tl-year">2020</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-card"><div class="tl-leg">Revisão Ampla</div>Portaria 1.416/2024: psicossociais, ergonomia e novas obrigações</div>
+          <div class="tl-dot"></div>
+          <div class="tl-year">ago/2024</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-card" style="border-top-color:var(--gold);"><div class="tl-leg" style="color:var(--gold);">Vigência Plena</div>Implementação total obrigatória para todos os estabelecimentos</div>
+          <div class="tl-dot" style="background:var(--gold);border-color:var(--gold);"></div>
+          <div class="tl-year" style="background:var(--gold);color:var(--navy);">mai/2026</div>
+        </div>
+      </div>
+    </div>
+    <div class="footer">Andrade Gestão Integrada &nbsp;|&nbsp; Consultoria em SGI & SST &nbsp;|&nbsp; www.andradegestaointegrada.com.br</div>
+  </div>
+
+  <!-- ════════════════════════════════ SLIDE 5 — MUDANÇAS ═══ -->
+  <div class="slide bg-light" id="s5">
+    <div class="pad">
+      <p class="slide-title">As Principais Mudanças da NR-01 Revisada</p>
+      <div class="title-bar"></div>
+      <div class="grid-2" style="gap:10px;">
+        <div class="change-item"><div class="change-title">🧠&nbsp; Riscos Psicossociais</div><div class="change-desc">Inclusão expressa no GRO: sobrecarga, assédio, falta de suporte</div></div>
+        <div class="change-item"><div class="change-title">📚&nbsp; Abrangência Total</div><div class="change-desc">Todos os perigos: físicos, químicos, biológicos, ergonômicos e de acidente</div></div>
+        <div class="change-item"><div class="change-title">👥&nbsp; Participação Ativa</div><div class="change-desc">Mecanismos formais de consulta e comunicação com trabalhadores</div></div>
+        <div class="change-item"><div class="change-title">🏗️&nbsp; Integração NR-17</div><div class="change-desc">Avaliação Ergonômica Preliminar (AEP) integrada ao ciclo do GRO</div></div>
+        <div class="change-item"><div class="change-title">📋&nbsp; PGR Estruturado</div><div class="change-desc">3 documentos mínimos: Inventário, Plano de Ação e Critérios</div></div>
+        <div class="change-item"><div class="change-title">⚙️&nbsp; Flexibilidade Operacional</div><div class="change-desc">PGR pode ser segmentado por setor, unidade ou atividade específica</div></div>
+      </div>
+    </div>
+    <div class="footer">Andrade Gestão Integrada &nbsp;|&nbsp; Consultoria em SGI & SST &nbsp;|&nbsp; www.andradegestaointegrada.com.br</div>
+  </div>
+
+  <!-- ════════════════════════════════ SLIDE 6 — SECTION 2 ═══ -->
+  <div class="slide bg-dark" id="s6">
+    <div class="section-center">
+      <div class="section-num">2</div>
+      <div class="section-title-text">O GRO na Prática</div>
+      <div class="section-divider"></div>
+    </div>
+    <div class="footer">Andrade Gestão Integrada &nbsp;|&nbsp; Consultoria em SGI & SST</div>
+  </div>
+
+  <!-- ════════════════════════════════ SLIDE 7 — O QUE É O GRO ═══ -->
+  <div class="slide bg-light" id="s7">
+    <div class="pad">
+      <p class="slide-title">O que é o GRO?</p>
+      <div class="title-bar"></div>
+      <div class="quote-box" style="margin-bottom:18px;">
+        "Processo contínuo e sistemático de identificação de perigos, avaliação e controle dos riscos ocupacionais, com a finalidade de proporcionar locais de trabalho seguros e saudáveis."
+        <span class="quote-attr">— Anexo I, NR-01 (Portaria 1.416/2024)</span>
+      </div>
+      <div class="grid-2" style="grid-template-columns:repeat(4,1fr);gap:10px;">
+        <div class="pillar"><div class="pillar-icon">🔍</div><div class="pillar-label">IDENTIFICAR</div><div class="pillar-sub">Perigos</div></div>
+        <div class="pillar"><div class="pillar-icon">📊</div><div class="pillar-label">AVALIAR</div><div class="pillar-sub">Riscos</div></div>
+        <div class="pillar"><div class="pillar-icon">🛡️</div><div class="pillar-label">CONTROLAR</div><div class="pillar-sub">Medidas</div></div>
+        <div class="pillar"><div class="pillar-icon">✅</div><div class="pillar-label">ACOMPANHAR</div><div class="pillar-sub">PDCA</div></div>
+      </div>
+    </div>
+    <div class="footer">Andrade Gestão Integrada &nbsp;|&nbsp; Consultoria em SGI & SST &nbsp;|&nbsp; www.andradegestaointegrada.com.br</div>
+  </div>
+
+  <!-- ════════════════════════════════ SLIDE 8 — PDCA ═══ -->
+  <div class="slide bg-dark" id="s8">
+    <div class="pad">
+      <p class="slide-title">Ciclo PDCA Aplicado ao GRO</p>
+      <div class="title-bar" style="background:var(--gold)"></div>
+      <div class="grid-2" style="gap:10px;">
+        <div class="pdca-quad">
+          <div class="pdca-label" style="background:var(--blue);">PLAN<span class="pdca-sub">Planejamento</span></div>
+          <div class="pdca-items">
+            <div class="pdca-item">Identificar todos os perigos</div>
+            <div class="pdca-item">Avaliar os riscos ocupacionais</div>
+            <div class="pdca-item">Definir medidas de prevenção</div>
+            <div class="pdca-item">Estabelecer critérios do GRO</div>
+          </div>
+        </div>
+        <div class="pdca-quad">
+          <div class="pdca-label" style="background:var(--green);">DO<span class="pdca-sub">Execução</span></div>
+          <div class="pdca-items">
+            <div class="pdca-item">Implementar controles</div>
+            <div class="pdca-item">Capacitar equipes e CIPA</div>
+            <div class="pdca-item">Comunicar trabalhadores</div>
+            <div class="pdca-item">Registrar ações realizadas</div>
+          </div>
+        </div>
+        <div class="pdca-quad">
+          <div class="pdca-label" style="background:var(--amber);">CHECK<span class="pdca-sub">Verificação</span></div>
+          <div class="pdca-items">
+            <div class="pdca-item">Monitorar desempenho SST</div>
+            <div class="pdca-item">Auditar o PGR</div>
+            <div class="pdca-item">Analisar acidentes</div>
+            <div class="pdca-item">Coletar indicadores</div>
+          </div>
+        </div>
+        <div class="pdca-quad">
+          <div class="pdca-label" style="background:var(--red);">ACT<span class="pdca-sub">Ação</span></div>
+          <div class="pdca-items">
+            <div class="pdca-item">Revisar e melhorar o sistema</div>
+            <div class="pdca-item">Atualizar o PGR</div>
+            <div class="pdca-item">Tratar não conformidades</div>
+            <div class="pdca-item">Retroalimentar o ciclo</div>
+          </div>
+        </div>
+      </div>
+      <div style="text-align:center;margin-top:10px;padding:6px 20px;background:rgba(207,174,112,.12);border-radius:20px;font-size:.7rem;color:var(--gold);font-weight:600;letter-spacing:.1em;">
+        ↻&nbsp; MELHORIA CONTÍNUA — O ciclo nunca para
+      </div>
+    </div>
+    <div class="footer">Andrade Gestão Integrada &nbsp;|&nbsp; Consultoria em SGI & SST &nbsp;|&nbsp; www.andradegestaointegrada.com.br</div>
+  </div>
+
+  <!-- ════════════════════════════════ SLIDE 9 — 5 GRUPOS ═══ -->
+  <div class="slide bg-light" id="s9">
+    <div class="pad">
+      <p class="slide-title">Abrangência: Os 5 Grupos de Risco do GRO</p>
+      <div class="title-bar"></div>
+      <div class="info-box" style="margin-bottom:14px;">
+        🏢&nbsp; PGR obrigatório por estabelecimento (CNPJ), abrangendo a totalidade das atividades — podendo ser segmentado por setor ou unidade operacional.
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;">
+        <div class="risk-col" style="border-top:4px solid var(--blue);">
+          <div class="risk-header" style="background:var(--blue);">Físicos</div>
+          <div class="risk-body">Ruído · Vibração<br>Temperatura<br>Radiação · Pressão</div>
+        </div>
+        <div class="risk-col" style="border-top:4px solid var(--purple);">
+          <div class="risk-header" style="background:var(--purple);">Químicos</div>
+          <div class="risk-body">Poeiras · Fumos<br>Gases · Névoas<br>Produtos tóxicos</div>
+        </div>
+        <div class="risk-col" style="border-top:4px solid var(--red);">
+          <div class="risk-header" style="background:var(--red);">Biológicos</div>
+          <div class="risk-body">Bactérias · Vírus<br>Fungos · Parasitas<br>Toxinas biológicas</div>
+        </div>
+        <div class="risk-col" style="border-top:4px solid var(--amber);">
+          <div class="risk-header" style="background:var(--amber);">Ergonômicos</div>
+          <div class="risk-body">Postura · Esforço<br>Repetitividade<br><strong style="color:var(--amber);">+ Psicossociais ★</strong></div>
+        </div>
+        <div class="risk-col" style="border-top:4px solid var(--green);">
+          <div class="risk-header" style="background:var(--green);">Acidente</div>
+          <div class="risk-body">Quedas · Máquinas<br>Incêndio · Explosão<br>Eletricidade</div>
+        </div>
+      </div>
+      <div style="margin-top:10px;text-align:right;">
+        <span style="background:var(--gold);color:var(--navy);font-size:.62rem;font-weight:700;padding:3px 10px;letter-spacing:.1em;">★ NOVO na NR-01 Revisada</span>
+      </div>
+    </div>
+    <div class="footer">Andrade Gestão Integrada &nbsp;|&nbsp; Consultoria em SGI & SST &nbsp;|&nbsp; www.andradegestaointegrada.com.br</div>
+  </div>
+
+  <!-- ════════════════════════════════ SLIDE 10 — SECTION 3 ═══ -->
+  <div class="slide bg-dark" id="s10">
+    <div class="section-center">
+      <div class="section-num">3</div>
+      <div class="section-title-text">Perigo vs. Risco Ocupacional</div>
+      <div class="section-divider"></div>
+    </div>
+    <div class="footer">Andrade Gestão Integrada &nbsp;|&nbsp; Consultoria em SGI & SST</div>
+  </div>
+
+  <!-- ════════════════════════════════ SLIDE 11 — CONCEITOS ═══ -->
+  <div class="slide bg-light" id="s11">
+    <div class="pad">
+      <p class="slide-title">Conceitos Fundamentais: Perigo e Risco</p>
+      <div class="title-bar"></div>
+      <div class="grid-2" style="gap:12px;align-items:stretch;">
+        <div class="concept-box" style="box-shadow:0 4px 20px rgba(0,0,0,.1);">
+          <div class="concept-header" style="background:var(--navy);">
+            <span style="font-size:1.1rem;">⚠️</span>
+            <span style="letter-spacing:.12em;color:var(--gold);">PERIGO</span>
+          </div>
+          <div class="concept-body" style="color:var(--navy);">
+            <p style="margin-bottom:10px;font-size:.78rem;">Elemento ou situação com potencial de causar lesões ou agravos à saúde, <strong>independentemente de haver exposição direta.</strong></p>
+            <p style="font-size:.72rem;font-weight:700;margin-bottom:8px;">Exemplos práticos:</p>
+            <div class="concept-item">Produto químico tóxico no almoxarifado</div>
+            <div class="concept-item">Máquina sem proteção coletiva</div>
+            <div class="concept-item">Piso molhado e escorregadio</div>
+            <div class="concept-item">Ruído contínuo acima de 85 dB(A)</div>
+          </div>
+        </div>
+        <div class="concept-box" style="box-shadow:0 4px 20px rgba(0,0,0,.1);">
+          <div class="concept-header" style="background:var(--gold);">
+            <span style="font-size:1.1rem;">📊</span>
+            <span style="letter-spacing:.12em;color:var(--navy);">RISCO</span>
+          </div>
+          <div class="concept-body" style="color:var(--navy);">
+            <p style="margin-bottom:10px;font-size:.78rem;">Combinação da probabilidade de ocorrer lesão causada por um perigo e da <strong>severidade dessa lesão.</strong> O risco depende da exposição.</p>
+            <div class="formula">RISCO = Probabilidade × Severidade</div>
+            <div style="height:10px;"></div>
+            <p style="font-size:.72rem;font-weight:700;margin-bottom:5px;">Premissa-chave:</p>
+            <p style="font-size:.72rem;color:var(--gray);">Sem exposição ao perigo → não há risco. Os controles atuam reduzindo a probabilidade ou a severidade do dano potencial.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="footer">Andrade Gestão Integrada &nbsp;|&nbsp; Consultoria em SGI & SST &nbsp;|&nbsp; www.andradegestaointegrada.com.br</div>
+  </div>
+
+  <!-- ════════════════════════════════ SLIDE 12 — SECTION 4 ═══ -->
+  <div class="slide bg-dark" id="s12">
+    <div class="section-center">
+      <div class="section-num">4</div>
+      <div class="section-title-text">Identificação de Perigos</div>
+      <div class="section-divider"></div>
+    </div>
+    <div class="footer">Andrade Gestão Integrada &nbsp;|&nbsp; Consultoria em SGI & SST</div>
+  </div>
+
+  <!-- ════════════════════════════════ SLIDE 13 — 3 ELEMENTOS ═══ -->
+  <div class="slide bg-light" id="s13">
+    <div class="pad">
+      <p class="slide-title">Identificação de Perigos: 3 Elementos Obrigatórios</p>
+      <div class="title-bar"></div>
+      <div style="background:var(--navy);padding:8px 16px;text-align:center;font-size:.75rem;font-weight:700;color:var(--gold);letter-spacing:.08em;margin-bottom:14px;">
+        Subitem 1.5.4.3 da NR-01 — os três elementos devem ser considerados simultaneamente
+      </div>
+      <div class="grid-3" style="gap:10px;">
+        <div style="background:var(--white);border-radius:2px;box-shadow:0 4px 20px rgba(0,0,0,.1);overflow:hidden;">
+          <div style="background:var(--navy);padding:12px;display:flex;flex-direction:column;align-items:center;gap:6px;">
+            <div class="num-pill">1</div>
+            <p style="font-size:.8rem;font-weight:700;color:var(--white);text-align:center;">Perigos Conhecidos</p>
+          </div>
+          <div style="padding:14px;font-size:.75rem;color:var(--gray);line-height:1.6;">
+            Considerar todos os perigos já registrados em históricos, laudos, relatórios e documentação técnica existente na organização.
+          </div>
+        </div>
+        <div style="background:var(--white);border-radius:2px;box-shadow:0 4px 20px rgba(0,0,0,.1);overflow:hidden;">
+          <div style="background:var(--navy);padding:12px;display:flex;flex-direction:column;align-items:center;gap:6px;">
+            <div class="num-pill">2</div>
+            <p style="font-size:.8rem;font-weight:700;color:var(--white);text-align:center;">Situações Rotineiras, Não-Rotineiras e de Emergência</p>
+          </div>
+          <div style="padding:14px;font-size:.75rem;color:var(--gray);line-height:1.6;">
+            Abranger todas as situações: atividades normais do dia a dia, eventuais (manutenção) e situações críticas de emergência.
+          </div>
+        </div>
+        <div style="background:var(--white);border-radius:2px;box-shadow:0 4px 20px rgba(0,0,0,.1);overflow:hidden;">
+          <div style="background:var(--navy);padding:12px;display:flex;flex-direction:column;align-items:center;gap:6px;">
+            <div class="num-pill">3</div>
+            <p style="font-size:.8rem;font-weight:700;color:var(--white);text-align:center;">Perigos Externos</p>
+          </div>
+          <div style="padding:14px;font-size:.75rem;color:var(--gray);line-height:1.6;">
+            Considerar perigos originados fora do estabelecimento que possam afetar os trabalhadores dentro do local de trabalho.
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="footer">Andrade Gestão Integrada &nbsp;|&nbsp; Consultoria em SGI & SST &nbsp;|&nbsp; www.andradegestaointegrada.com.br</div>
+  </div>
+
+  <!-- ════════════════════════════════ SLIDE 14 — SECTION 5 ═══ -->
+  <div class="slide bg-dark" id="s14">
+    <div class="section-center">
+      <div class="section-num">5</div>
+      <div class="section-title-text">Avaliação e Controle de Riscos</div>
+      <div class="section-divider"></div>
+    </div>
+    <div class="footer">Andrade Gestão Integrada &nbsp;|&nbsp; Consultoria em SGI & SST</div>
+  </div>
+
+  <!-- ════════════════════════════════ SLIDE 15 — MATRIZ ═══ -->
+  <div class="slide bg-light" id="s15">
+    <div class="pad">
+      <p class="slide-title">Matriz de Avaliação: Probabilidade × Severidade</p>
+      <div class="title-bar"></div>
+      <div style="display:flex;gap:14px;align-items:flex-start;">
+        <!-- Matrix -->
+        <div style="flex:1;">
+          <div style="display:grid;grid-template-columns:80px repeat(4,1fr);gap:3px;">
+            <div></div>
+            <div style="text-align:center;font-size:.65rem;font-weight:700;color:var(--navy);padding:4px 0;">Improvável</div>
+            <div style="text-align:center;font-size:.65rem;font-weight:700;color:var(--navy);padding:4px 0;">Pouco Provável</div>
+            <div style="text-align:center;font-size:.65rem;font-weight:700;color:var(--navy);padding:4px 0;">Provável</div>
+            <div style="text-align:center;font-size:.65rem;font-weight:700;color:var(--navy);padding:4px 0;">Muito Provável</div>
+            <!-- Row 1 -->
+            <div style="display:flex;align-items:center;justify-content:flex-end;padding-right:8px;font-size:.65rem;font-weight:700;color:var(--navy);">Muito Alta</div>
+            <div class="mx-cell" style="background:var(--red);color:white;">EXTREMO</div>
+            <div class="mx-cell" style="background:var(--red);color:white;">EXTREMO</div>
+            <div class="mx-cell" style="background:var(--red);color:white;">EXTREMO</div>
+            <div class="mx-cell" style="background:var(--red);color:white;">EXTREMO</div>
+            <!-- Row 2 -->
+            <div style="display:flex;align-items:center;justify-content:flex-end;padding-right:8px;font-size:.65rem;font-weight:700;color:var(--navy);">Alta</div>
+            <div class="mx-cell" style="background:var(--amber);color:white;">ALTO</div>
+            <div class="mx-cell" style="background:var(--red);color:white;">EXTREMO</div>
+            <div class="mx-cell" style="background:var(--red);color:white;">EXTREMO</div>
+            <div class="mx-cell" style="background:var(--red);color:white;">EXTREMO</div>
+            <!-- Row 3 -->
+            <div style="display:flex;align-items:center;justify-content:flex-end;padding-right:8px;font-size:.65rem;font-weight:700;color:var(--navy);">Média</div>
+            <div class="mx-cell" style="background:var(--blue);color:white;">MÉDIO</div>
+            <div class="mx-cell" style="background:var(--amber);color:white;">ALTO</div>
+            <div class="mx-cell" style="background:var(--red);color:white;">EXTREMO</div>
+            <div class="mx-cell" style="background:var(--red);color:white;">EXTREMO</div>
+            <!-- Row 4 -->
+            <div style="display:flex;align-items:center;justify-content:flex-end;padding-right:8px;font-size:.65rem;font-weight:700;color:var(--navy);">Baixa</div>
+            <div class="mx-cell" style="background:var(--green);color:white;">BAIXO</div>
+            <div class="mx-cell" style="background:var(--blue);color:white;">MÉDIO</div>
+            <div class="mx-cell" style="background:var(--amber);color:white;">ALTO</div>
+            <div class="mx-cell" style="background:var(--red);color:white;">EXTREMO</div>
+          </div>
+          <div style="text-align:center;margin-top:6px;font-size:.62rem;font-weight:700;color:var(--navy);letter-spacing:.1em;">PROBABILIDADE →</div>
+        </div>
+        <!-- Legend -->
+        <div style="display:flex;flex-direction:column;gap:8px;min-width:160px;">
+          <p style="font-size:.7rem;font-weight:700;color:var(--navy);margin-bottom:4px;">Legenda:</p>
+          <div style="display:flex;align-items:center;gap:8px;"><div style="width:24px;height:24px;background:var(--red);border-radius:2px;flex-shrink:0;"></div><span style="font-size:.72rem;color:var(--gray);">EXTREMO — Ação imediata</span></div>
+          <div style="display:flex;align-items:center;gap:8px;"><div style="width:24px;height:24px;background:var(--amber);border-radius:2px;flex-shrink:0;"></div><span style="font-size:.72rem;color:var(--gray);">ALTO — Prioridade urgente</span></div>
+          <div style="display:flex;align-items:center;gap:8px;"><div style="width:24px;height:24px;background:var(--blue);border-radius:2px;flex-shrink:0;"></div><span style="font-size:.72rem;color:var(--gray);">MÉDIO — Planejar e controlar</span></div>
+          <div style="display:flex;align-items:center;gap:8px;"><div style="width:24px;height:24px;background:var(--green);border-radius:2px;flex-shrink:0;"></div><span style="font-size:.72rem;color:var(--gray);">BAIXO — Monitorar</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="footer">Andrade Gestão Integrada &nbsp;|&nbsp; Consultoria em SGI & SST &nbsp;|&nbsp; www.andradegestaointegrada.com.br</div>
+  </div>
+
+  <!-- ════════════════════════════════ SLIDE 16 — HIERARQUIA ═══ -->
+  <div class="slide bg-dark" id="s16">
+    <div class="pad">
+      <p class="slide-title">Hierarquia das Medidas de Prevenção</p>
+      <div class="title-bar" style="background:var(--gold)"></div>
+      <div style="display:flex;flex-direction:column;gap:7px;">
+        <div class="hier-bar" style="background:var(--green);margin:0 0%;">
+          <span class="hier-label">1.&nbsp; ELIMINAR</span>
+          <span class="hier-desc">Remover completamente o perigo do processo de trabalho</span>
+        </div>
+        <div class="hier-bar" style="background:#5CB85C;margin:0 4%;">
+          <span class="hier-label">2.&nbsp; SUBSTITUIR</span>
+          <span class="hier-desc">Trocar o agente perigoso por outro de menor potencial de dano</span>
+        </div>
+        <div class="hier-bar" style="background:var(--blue);margin:0 8%;">
+          <span class="hier-label">3.&nbsp; ENGENHARIA</span>
+          <span class="hier-desc">Isolar, enclausurar ou modificar o processo na fonte</span>
+        </div>
+        <div class="hier-bar" style="background:var(--amber);margin:0 12%;">
+          <span class="hier-label">4.&nbsp; ADMINISTRATIVO</span>
+          <span class="hier-desc">Rodízio, treinamentos, procedimentos, sinalização</span>
+        </div>
+        <div class="hier-bar" style="background:var(--red);margin:0 16%;">
+          <span class="hier-label">5.&nbsp; EPI</span>
+          <span class="hier-desc">Última barreira — equipamento de proteção individual</span>
+        </div>
+      </div>
+      <div style="margin-top:10px;padding:7px 16px;background:var(--midnavy);border-radius:2px;text-align:center;">
+        <span style="font-size:.7rem;color:var(--gold);font-style:italic;">Preferência: da fonte → via de transmissão → receptor &nbsp;|&nbsp; EPI somente quando outras medidas são insuficientes</span>
+      </div>
+    </div>
+    <div class="footer">Andrade Gestão Integrada &nbsp;|&nbsp; Consultoria em SGI & SST &nbsp;|&nbsp; www.andradegestaointegrada.com.br</div>
+  </div>
+
+  <!-- ════════════════════════════════ SLIDE 17 — SECTION 6 ═══ -->
+  <div class="slide bg-dark" id="s17">
+    <div class="section-center">
+      <div class="section-num">6</div>
+      <div class="section-title-text">Documentação do PGR</div>
+      <div class="section-divider"></div>
+    </div>
+    <div class="footer">Andrade Gestão Integrada &nbsp;|&nbsp; Consultoria em SGI & SST</div>
+  </div>
+
+  <!-- ════════════════════════════════ SLIDE 18 — 3 DOCUMENTOS ═══ -->
+  <div class="slide bg-light" id="s18">
+    <div class="pad">
+      <p class="slide-title">Os 3 Documentos Mínimos Obrigatórios do PGR</p>
+      <div class="title-bar"></div>
+      <div class="grid-3" style="gap:10px;align-items:stretch;">
+        <div class="doc-card">
+          <div class="doc-header">
+            <div class="doc-num">01</div>
+            <div class="doc-title">Inventário de Riscos Ocupacionais</div>
+          </div>
+          <div class="doc-body">
+            <div class="doc-item">Todos os perigos identificados</div>
+            <div class="doc-item">Resultados das avaliações de risco</div>
+            <div class="doc-item">Medidas de prevenção existentes</div>
+            <div class="doc-item">Atualizado sempre que necessário</div>
+          </div>
+          <div class="doc-ref">Subitens 1.5.7.1 e 1.5.7.3</div>
+        </div>
+        <div class="doc-card">
+          <div class="doc-header">
+            <div class="doc-num">02</div>
+            <div class="doc-title">Plano de Ação</div>
+          </div>
+          <div class="doc-body">
+            <div class="doc-item">Medidas a introduzir ou aprimorar</div>
+            <div class="doc-item">Cronograma de implementação</div>
+            <div class="doc-item">Responsáveis por cada ação</div>
+            <div class="doc-item">Acompanhamento periódico</div>
+          </div>
+          <div class="doc-ref">Subitens 1.5.7.1 e 1.5.5.2</div>
+        </div>
+        <div class="doc-card">
+          <div class="doc-header">
+            <div class="doc-num">03</div>
+            <div class="doc-title">Critérios do GRO/PGR</div>
+          </div>
+          <div class="doc-body">
+            <div class="doc-item">Metodologias de avaliação adotadas</div>
+            <div class="doc-item">Critérios de gradação de risco</div>
+            <div class="doc-item">Fontes de referência utilizadas</div>
+            <div class="doc-item">Base para consistência e auditoria</div>
+          </div>
+          <div class="doc-ref">Subitem 1.5.4.4.2.2</div>
+        </div>
+      </div>
+    </div>
+    <div class="footer">Andrade Gestão Integrada &nbsp;|&nbsp; Consultoria em SGI & SST &nbsp;|&nbsp; www.andradegestaointegrada.com.br</div>
+  </div>
+
+  <!-- ════════════════════════════════ SLIDE 19 — SECTION 7 ═══ -->
+  <div class="slide bg-dark" id="s19">
+    <div class="section-center">
+      <div class="section-num">7</div>
+      <div class="section-title-text">Riscos Psicossociais: A Grande Inovação</div>
+      <div class="section-divider"></div>
+    </div>
+    <div class="footer">Andrade Gestão Integrada &nbsp;|&nbsp; Consultoria em SGI & SST</div>
+  </div>
+
+  <!-- ════════════════════════════════ SLIDE 20 — PSICOSSOCIAIS ═══ -->
+  <div class="slide bg-dark" id="s20">
+    <div class="pad">
+      <p class="slide-title">Fatores de Riscos Psicossociais Relacionados ao Trabalho</p>
+      <div class="title-bar" style="background:var(--gold)"></div>
+      <div class="card-dark" style="padding:10px 14px;margin-bottom:12px;border-left:4px solid var(--gold);">
+        🧠&nbsp; <em style="font-size:.78rem;color:var(--white);">Incluídos expressamente no GRO pela Portaria 1.416/2024. Guia específico MTE publicado em abril/2025. Vigência: maio/2026.</em>
+      </div>
+      <div class="grid-2" style="gap:8px;">
+        <div class="psico-card"><div class="psico-title">Excesso de Demandas</div><div class="psico-desc">Sobrecarga, metas inatingíveis, horas extras excessivas</div></div>
+        <div class="psico-card"><div class="psico-title">Assédio (qualquer tipo)</div><div class="psico-desc">Assédio moral, sexual ou de qualquer natureza no trabalho</div></div>
+        <div class="psico-card"><div class="psico-title">Falta de Suporte</div><div class="psico-desc">Ausência de apoio de chefias ou colegas, isolamento no trabalho</div></div>
+        <div class="psico-card"><div class="psico-title">Falta de Controle</div><div class="psico-desc">Trabalhador sem autonomia sobre ritmo e método de trabalho</div></div>
+        <div class="psico-card"><div class="psico-title">Conflito Trabalho-Vida</div><div class="psico-desc">Dificuldade de conciliar demandas profissionais e vida pessoal</div></div>
+        <div class="psico-card"><div class="psico-title">Violência no Trabalho</div><div class="psico-desc">Ameaças, agressões ou comportamentos hostis no ambiente</div></div>
+      </div>
+    </div>
+    <div class="footer">Andrade Gestão Integrada &nbsp;|&nbsp; Consultoria em SGI & SST &nbsp;|&nbsp; www.andradegestaointegrada.com.br</div>
+  </div>
+
+  <!-- ════════════════════════════════ SLIDE 21 — RESPONSABILIDADES ═══ -->
+  <div class="slide bg-light" id="s21">
+    <div class="pad">
+      <p class="slide-title">Responsabilidades da Organização no GRO</p>
+      <div class="title-bar"></div>
+      <div class="grid-2" style="gap:10px;">
+        <div class="resp-card"><div class="resp-icon-wrap">⚙️</div><div class="resp-title">Implementar Processos</div><div class="resp-desc">Estruturar e manter os processos do GRO de forma contínua e sistemática</div></div>
+        <div class="resp-card"><div class="resp-icon-wrap">👥</div><div class="resp-title">Engajar Trabalhadores</div><div class="resp-desc">Criar mecanismos de participação, consulta e comunicação (CIPA e outros)</div></div>
+        <div class="resp-card"><div class="resp-icon-wrap">⚖️</div><div class="resp-title">Garantir Recursos</div><div class="resp-desc">Alocar pessoal, tempo e orçamento para implementação e manutenção</div></div>
+        <div class="resp-card"><div class="resp-icon-wrap">📋</div><div class="resp-title">Manter Documentação</div><div class="resp-desc">Elaborar, atualizar e disponibilizar os documentos do PGR</div></div>
+        <div class="resp-card"><div class="resp-icon-wrap">🦺</div><div class="resp-title">Controlar Riscos</div><div class="resp-desc">Implementar medidas seguindo a hierarquia dos controles</div></div>
+        <div class="resp-card"><div class="resp-icon-wrap">📈</div><div class="resp-title">Melhorar Continuamente</div><div class="resp-desc">Monitorar desempenho do GRO e atualizar diante de mudanças</div></div>
+      </div>
+    </div>
+    <div class="footer">Andrade Gestão Integrada &nbsp;|&nbsp; Consultoria em SGI & SST &nbsp;|&nbsp; www.andradegestaointegrada.com.br</div>
+  </div>
+
+  <!-- ════════════════════════════════ SLIDE 22 — PRÓXIMOS PASSOS ═══ -->
+  <div class="slide bg-dark" id="s22">
+    <div class="pad">
+      <p class="slide-title">Roteiro de Implementação: Próximos Passos</p>
+      <div class="title-bar" style="background:var(--gold)"></div>
+      <div class="grid-2" style="gap:10px;">
+        <div class="step-card"><div class="step-num-block">01</div><div class="step-text"><div class="step-title">Diagnóstico (Gap Análise)</div><div class="step-desc">Identificar lacunas entre a situação atual e os requisitos da NR-01 revisada</div></div></div>
+        <div class="step-card"><div class="step-num-block">02</div><div class="step-text"><div class="step-title">Planejamento (5W2H)</div><div class="step-desc">Estruturar plano de ação com responsáveis, prazos e recursos definidos</div></div></div>
+        <div class="step-card"><div class="step-num-block">03</div><div class="step-text"><div class="step-title">Implementação do GRO</div><div class="step-desc">Executar levantamento, avaliação e controle de todos os perigos</div></div></div>
+        <div class="step-card"><div class="step-num-block">04</div><div class="step-text"><div class="step-title">Documentação do PGR</div><div class="step-desc">Elaborar os 3 documentos mínimos e todos os registros exigidos</div></div></div>
+        <div class="step-card"><div class="step-num-block">05</div><div class="step-text"><div class="step-title">Treinamento e Engajamento</div><div class="step-desc">Capacitar lideranças, SESMT, CIPA e trabalhadores sobre o novo GRO</div></div></div>
+        <div class="step-card"><div class="step-num-block">06</div><div class="step-text"><div class="step-title">Auditoria e Melhoria Contínua</div><div class="step-desc">Verificar conformidade e retroalimentar o sistema com evidências</div></div></div>
+      </div>
+    </div>
+    <div class="footer">Andrade Gestão Integrada &nbsp;|&nbsp; Consultoria em SGI & SST &nbsp;|&nbsp; www.andradegestaointegrada.com.br</div>
+  </div>
+
+  <!-- ════════════════════════════════ SLIDE 23 — ENCERRAMENTO ═══ -->
+  <div class="slide bg-dark" id="s23">
+    <div class="closing">
+      <div style="font-size:3.5rem;margin-bottom:4px;">🛡️</div>
+      <p class="serif" style="font-size:clamp(1.4rem,3vw,2.2rem);color:var(--white);font-style:italic;font-weight:600;">
+        Conformidade não é burocracia.
+      </p>
+      <p class="serif" style="font-size:clamp(1.1rem,2.5vw,1.8rem);color:var(--gold);font-style:italic;font-weight:600;">
+        É proteção real para quem trabalha.
+      </p>
+      <div style="width:140px;height:2px;background:var(--gold);border-radius:2px;margin:8px 0;"></div>
+      <div class="closing-card">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:700;color:var(--gold);margin-bottom:6px;">
+          Andrade Gestão Integrada
+        </div>
+        <div style="font-size:.78rem;color:var(--white);margin-bottom:4px;">Consultoria Especializada em SGI / SST</div>
+        <div style="font-size:.7rem;color:#AAAAAA;font-style:italic;">alexandre@andradegestaointegrada.com.br &nbsp;|&nbsp; São Bernardo do Campo — SP</div>
+      </div>
+    </div>
+    <div class="footer">© 2025 Andrade Gestão Integrada &nbsp;|&nbsp; Todos os direitos reservados</div>
+  </div>
+
+</div><!-- /deck -->
+
+<!-- ── NAVIGATION ── -->
+<div id="nav">
+  <button class="nav-btn" id="btnPrev" onclick="goTo(current-1)" disabled>◀</button>
+  <div id="progress-bar"><div id="progress-fill" style="width:4.35%"></div></div>
+  <span id="counter">1 / 23</span>
+  <button class="nav-btn" id="btnNext" onclick="goTo(current+1)">▶</button>
+</div>
+
+<script>
+  const TOTAL = 23;
+  let current = 1;
+
+  function goTo(n) {
+    if (n < 1 || n > TOTAL) return;
+    const prev = document.getElementById('s' + current);
+    const next = document.getElementById('s' + n);
+    prev.classList.remove('active');
+    prev.classList.add('exit');
+    setTimeout(() => prev.classList.remove('exit'), 500);
+    next.classList.add('active');
+    current = n;
+    document.getElementById('counter').textContent = current + ' / ' + TOTAL;
+    document.getElementById('progress-fill').style.width = (current / TOTAL * 100) + '%';
+    document.getElementById('btnPrev').disabled = current === 1;
+    document.getElementById('btnNext').disabled = current === TOTAL;
+  }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === ' ') goTo(current + 1);
+    if (e.key === 'ArrowLeft') goTo(current - 1);
+  });
+
+  // Touch support
+  let touchX = 0;
+  document.addEventListener('touchstart', e => touchX = e.touches[0].clientX);
+  document.addEventListener('touchend', e => {
+    const dx = e.changedTouches[0].clientX - touchX;
+    if (dx < -50) goTo(current + 1);
+    if (dx >  50) goTo(current - 1);
+  });
+</script>
+</body>
+</html>
